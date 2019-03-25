@@ -143,7 +143,6 @@ def post_delete(request, id):
         return HttpResponse('当前登录用户没有权限，请切换用户或者联系管理员.')
 
 
-
 # 班级人员列表——艾鹏
 def profile_list(request, id):
     department = Department.objects.get(id=id)
@@ -156,9 +155,6 @@ def profile_list(request, id):
 def section_list(request):
     look = Department.objects.filter(name__contains="部")
     return render(request, 'training/department/look_section.html', {'look': look})
-
-
-
 
 
 # 部门下的人员__斌
