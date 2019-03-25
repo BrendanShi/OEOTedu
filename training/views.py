@@ -17,10 +17,14 @@ def index(request):
     return render(request, 'training/index.html', {'posts': posts, 'depas': depas})
 
 
-# 课程列表
-def courses_list(request):
-    courses = Course.objects.all()
-    return render(request, 'training/courses_list.html', {'courses': courses})
+# # 课程列表
+# def courses_list(request):
+#     courses = Course.objects.all()
+#     return render(request, 'training/courses_list.html', {'courses': courses})
+
+
+def course_failed(request):
+    return render(request, 'training/course_failed.html')
 
 
 # 课程添加功能__赵昊蓁
@@ -28,6 +32,14 @@ def course_add(request):
     courses = Course.objects.all().filter(teacher__name=request.user.profile.name)
     if request.method == 'POST':
         course_form = CourseForm(data=request.POST)
+        if course_form.is_valid() and not courses:
+            start = course_form.cleaned_data['starttime']
+            end = course_form.cleaned_data['endtime']
+            if start < end:
+                course_form.save()
+                return HttpResponseRedirect('/courses_list/')
+            else:
+                return HttpResponseRedirect('/course_failed/')
         if course_form.is_valid() and courses:
             for course in courses:
                 # 拿到课程的开始时间和结束时间
@@ -37,11 +49,11 @@ def course_add(request):
                 start = course_form.cleaned_data['starttime']
                 end = course_form.cleaned_data['endtime']
                 # 符合课程时间的条件为：开始时间大于结束时间，结束时间小于开始时间
-                if start >= time_end or end <= time_start:
+                if start >= time_end or end <= time_start and start < end:
                     course_form.save()
                     return HttpResponseRedirect('/courses_list/')
                 else:
-                    return HttpResponse('时间段冲突，请重新修改')
+                    return HttpResponseRedirect('/course_failed/')
     else:
         course_form = CourseForm()
     return render(request, 'training/create_course.html', {'course_form': course_form})
@@ -63,11 +75,11 @@ def course_edit(request, id):
                 start = course_form.cleaned_data['starttime']
                 end = course_form.cleaned_data['endtime']
                 # 符合课程时间的条件为：开始时间大于结束时间，结束时间小于开始时间
-                if start >= time_end or end <= time_start:
+                if start >= time_end or end <= time_start and start < end:
                     course_form.save()
                     return HttpResponseRedirect('/courses_list/')
                 else:
-                    return HttpResponse('时间段冲突，请重新修改')
+                    return HttpResponseRedirect('/course_failed/')
     else:
         course_form = CourseForm(instance=course)
     return render(request, 'training/course_edit.html', {'course_form': course_form})
@@ -241,11 +253,11 @@ def course_apply(request, id):
             start = course1.starttime
             end = course1.endtime
             # 符合课程时间的条件为：开始时间大于结束时间，结束时间小于开始时间
-            if start >= time_end or end <= time_start:
+            if start >= time_end or end <= time_start and start < end:
                 course.students.add(request.user.profile)
                 return redirect("courses_list")
             else:
-                return render(request, 'training/course_failed.html')
+                return redirect("course_failed")
 
 
 def user_like(request):
