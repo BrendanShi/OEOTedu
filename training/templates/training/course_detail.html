@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>课程名称：{{ course.name }}</p>
+<p>老师：{{ course.teacher }}</p>
+<p>共有 <span class="count">{{ course.students.count }}</span>个学生</p>
+{% if course not in courses %}
+    <a data-stu_id="{{ request.user.profile.id }}" data-action="like" data-cour_id="{{ course.id }}" href="#"
+       class="like">报名</a>
+{% else %}
+    <a data-stu_id="{{ request.user.profile.id }}" data-action="unlike" data-cour_id="{{ course.id }}" href="#"
+       class="like">取消报名</a>
+{% endif %}
+<a href="{% url 'courses_list' %}">返回所有课程列表</a>
+</body>
+</html>
+<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script>
+    var csrftoken = Cookies.get('csrftoken');
+
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $(document).ready(function () {
+        $('a.like').click(function (e) {
+            e.preventDefault();
+            $.post('{% url 'like' %}',
+                {
+                    stu_id: $(this).data('stu_id'),
+                    cour_id: $(this).data('cour_id'),
+                    action: $(this).data('action'),
+                },
+                function (data) {
+
+                    if (data['status'] === 'ok') {
+                        let previous_action = $('a.like').data('action');
+                        //切换 data-action 属性
+                        $('a.like').data('action', previous_action === 'like' ? 'unlike' : 'like');
+                        //切换按钮文本
+                        $('a.like').text(previous_action === 'like' ? '取消报名' : '报名');
+                        //更新总的喜欢人数
+                        let previous_likes = parseInt($('span.count').text());
+                        $('span.count').text(previous_action === 'like' ? previous_likes + 1 : previous_likes - 1);
+                    }
+                }
+            );
+        });
+    });
+
+</script>
+

@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Post, Company, Department
-from .forms import PostForm
 from .models import Course, Note
 from .forms import CourseForm, PostForm
-from datetime import datetime
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from datetime import date
 from .models import Profile, Post, Company, Department, Note
 from .forms import PostForm, NoteForm
 from django.http import HttpResponseRedirect, HttpResponse
@@ -150,7 +149,6 @@ def profile_list(request, id):
     return render(request, 'training/department/department_detail.html',
                   {'department': department, 'profiles': profiles})
 
-
 # 查看部门__斌
 def section_list(request):
     look = Department.objects.filter(name__contains="部")
@@ -218,7 +216,62 @@ def course_list(request):
     return render(request, 'training/courses_list.html', {'courses': courses, 'all_courses': all_courses})
 
 
+def course_detail(request, id):
+    course = Course.objects.get(id=id)
+    courses = Course.objects.all()
+    return render(request, 'training/course_detail.html', {'course': course, 'courses': courses})
+
+
 def course_delete_stu(request, id):
     course = Course.objects.get(id=id)
     course.students.remove(request.user.profile)
     return redirect('courses_list')
+
+
+# 报名课程
+def course_apply(request, id):
+    courses = Course.objects.all().filter(students__name=request.user.profile.name)
+    course = Course.objects.get(id=id)
+    if request.method == 'POST':
+        for course1 in courses:
+            # 拿到课程的开始时间和结束时间
+            time_start = course.starttime
+            time_end = course.endtime
+            # 得到修改后的课程的开始时间和结束时间
+            start = course1.starttime
+            end = course1.endtime
+            # 符合课程时间的条件为：开始时间大于结束时间，结束时间小于开始时间
+            if start >= time_end or end <= time_start:
+                course.students.add(request.user.profile)
+                return redirect("courses_list")
+            else:
+                return render(request, 'training/course_failed.html')
+
+
+def user_like(request):
+    stu_id = request.POST.get('stu_id')
+    cour_id = request.POST.get('cour_id')
+    action = request.POST.get('action')
+
+    if stu_id and cour_id and action:
+        try:
+            student = Profile.objects.get(id=stu_id)
+            course = Course.objects.get(id=cour_id)
+            if action == 'like':
+                course.students.add(student)
+            else:
+                course.students.remove(student)
+            return JsonResponse({'status': 'ok'})
+        except:
+            pass
+    return JsonResponse({'status': 'ko'})
+#最新课程（可报名）--王凯杰
+def new_course(request):
+    new_courses=Course.objects.all().order_by('starttime')
+    course_list=[]
+    for course in new_courses:
+        c=course.students.count()
+        if c<course.most:
+            course_list.append(course)
+
+    return render(request,'training/new_courses.html',{'course_list':course_list})
