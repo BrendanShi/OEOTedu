@@ -5,9 +5,9 @@
     <title>班级详情介绍</title>
 </head>
 <body>
-<h3>欢迎来到{{ class_details.name}}</h3>
+<h3>欢迎来到{{ class_details.name }}</h3>
 <p>班级介绍：{{ class_details.info }}</p>
-
 <p><a href="{% url 'department_detail' class_details.id %}">班级人员列表</a></p>
+<br>
 </body>
 </html>

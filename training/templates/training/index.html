@@ -8,21 +8,22 @@
 
 欢迎光临:{{ user }}
 <h3>奇酷学院公告</h3>
-<a href="{% url 'company' %}">公司详情</a>
-<a href="{% url 'courses_list' %}">课程列表</a>
 {% for post in posts %}
     <p><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></p>
 {% endfor %}
 <hr>
 <a href="{% url 'post_add' %}">添加公告</a>
 <hr>
-<a href="{% url 'stu_note' %}">值日表</a>
-<br>
-<p><a href="{% url 'section_list' %}">查看部门</a></p>
-<p><a href="{% url 'class_list'  %}">查看班级</a></p>
-
+<p><a href="{% url 'company' %}">公司详情</a></p>
+<a href="{% url 'courses_list' %}">课程列表</a>
 
 <hr>
+<p><a href="{% url 'section_list' %}">查看部门</a></p>
+<p><a href="{% url 'class_list' %}">查看班级</a></p>
+<hr>
 <p><a href="{% url 'duty_list' %}">值班表</a></p>
+<p><a href="{% url 'stu_note' %}">值日表</a></p>
+<hr>
+<p><a href="{% url 'new_course' %}">最新课程</a></p>
 </body>
 </html>
