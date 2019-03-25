@@ -11,8 +11,9 @@
     {% for all_cours in all_courses %}
         <h4>{{ all_cours.name }}</h4>
     {% endfor %}
+    <h3>我的课程：</h3>
     {% for course in courses %}
-        {{ course.name }}
+        <h4>{{ course.name }}</h4>
         <a href="{% url 'course_edit' course.id %}">修改课程</a>
         <p>开始时间：{{ course.starttime }}</p>
         <p>结束时间：{{ course.endtime }}</p>
@@ -25,9 +26,9 @@
         <h4><a href="{% url 'course_detail' all_cours.id %}">{{ all_cours.name }}</a></h4>
         <h5>共有{{ all_cours.students.count }}个学生</h5>
     {% endfor %}
+    <h3>我的课程：</h3>
     {% for course in courses %}
-        {{ course.name }}
-        <a href="{% url 'course_delete_stu' course.id %}">取消</a>
+        <h4><a href="{% url 'course_detail' course.id %}">{{ course.name }}</a></h4>
         <p>开始时间：{{ course.starttime }}</p>
         <p>结束时间：{{ course.endtime }}</p>
     {% endfor %}

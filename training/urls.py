@@ -6,6 +6,7 @@ urlpatterns = [
 
     path('courses_list/', views.course_list, name='courses_list'),  # 链接课程列表页
     path('course_edit/<int:id>/', views.course_edit, name='course_edit'),
+    path('course_failed/', views.course_failed, name='course_failed'),
     path('course_delete_stu/<int:id>/', views.course_delete_stu, name='course_delete_stu'),
     path('course_detail/<int:id>/', views.course_detail, name='course_detail'),
     path('like/', views.user_like, name='like'),
