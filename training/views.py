@@ -85,19 +85,19 @@ def course_edit(request, id):
     return render(request, 'training/course_edit.html', {'course_form': course_form})
 
 
+# 删除课程
 def course_delete(request, id):
     all = Course.objects.get(id=id)
     all.delete()
     return HttpResponseRedirect('/courses_list/')
 
-
+#公司
 def company(request):
     company = Company.objects.all()
     return render(request, 'training/company.html', {'company': company})
 
 
 # 在列表里获得到作者、内容和标题
-
 def post_detail(request, id):
     post = Post.objects.get(id=id)
     return render(request, 'training/post/post_detail.html', {'post': post})
@@ -160,6 +160,7 @@ def profile_list(request, id):
     profiles = department.depart_emp.all()
     return render(request, 'training/department/department_detail.html',
                   {'department': department, 'profiles': profiles})
+
 
 # 查看部门__斌
 def section_list(request):
@@ -277,13 +278,15 @@ def user_like(request):
         except:
             pass
     return JsonResponse({'status': 'ko'})
-#最新课程（可报名）--王凯杰
+
+
+# 最新课程（可报名）--王凯杰
 def new_course(request):
-    new_courses=Course.objects.all().order_by('starttime')
-    course_list=[]
+    new_courses = Course.objects.all().order_by('starttime')
+    course_list = []
     for course in new_courses:
-        c=course.students.count()
-        if c<course.most:
+        c = course.students.count()
+        if c < course.most:
             course_list.append(course)
 
-    return render(request,'training/new_courses.html',{'course_list':course_list})
+    return render(request, 'training/new_courses.html', {'course_list': course_list})

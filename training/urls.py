@@ -3,7 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-
     path('courses_list/', views.course_list, name='courses_list'),  # 链接课程列表页
     path('course_edit/<int:id>/', views.course_edit, name='course_edit'),
     path('course_failed/', views.course_failed, name='course_failed'),
@@ -15,7 +14,6 @@ urlpatterns = [
     # 更新公告
     path('post/update/<int:id>/', views.post_update, name='post_update'),
     path('course_apply/<int:id>/', views.course_apply, name='course_apply'),
-
     # 删除——艾鹏
     path('post_delete/<int:id>/', views.post_delete, name='post_delete'),
     # 人员表——艾鹏
